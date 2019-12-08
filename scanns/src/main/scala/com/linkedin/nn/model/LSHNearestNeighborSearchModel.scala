@@ -12,6 +12,7 @@ import com.linkedin.nn.utils.TopNQueue
 import org.apache.spark.{HashPartitioner, TaskContext}
 import org.apache.spark.ml.linalg.Vector
 import org.apache.spark.rdd.RDD
+import org.apache.log4j.Logger
 
 import scala.collection.mutable
 import scala.util.Random
@@ -176,11 +177,13 @@ abstract class LSHNearestNeighborSearchModel[T <: LSHNearestNeighborSearchModel[
                         partitionId: Int,
                         itemVectors: mutable.Map[ItemId, Vector],
                         hashBuckets: mutable.Map[Int, Array[mutable.ArrayBuffer[ItemId]]]): Unit = {
-    System.out.println(s"Partition id [$partitionId] stats:")
-    System.out.println(s"Size of item vectors map: [${itemVectors.size}]")
-    System.out.println(s"Number of hash buckets: [${hashBuckets.size}]")
+    val logger = Logger.getRootLogger
+
+    logger.info(s"Partition id [$partitionId] stats:")
+    logger.info(s"Size of item vectors map: [${itemVectors.size}]")
+    logger.info(s"Number of hash buckets: [${hashBuckets.size}]")
     hashBuckets.foreach{ case (bucketId, items) =>
-      System.out.println(s"Bucket id [$bucketId] has [${items(0).size}] src items and [${items(1).size}] candidates")
+      logger.info(s"Bucket id [$bucketId] has [${items(0).size}] src items and [${items(1).size}] candidates")
     }
   }
 
@@ -283,7 +286,7 @@ abstract class LSHNearestNeighborSearchModel[T <: LSHNearestNeighborSearchModel[
             isCandidatePoolIt = true)
 
           // TODO Start using loggers to log useful info
-          // logStats(TaskContext.getPartitionId(), itemVectors, hashBuckets)
+           logStats(TaskContext.getPartitionId(), itemVectors, hashBuckets)
           new NearestNeighborIterator(hashBuckets.valuesIterator, itemVectors, k)
         }
       }
