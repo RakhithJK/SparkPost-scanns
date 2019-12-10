@@ -177,11 +177,9 @@ abstract class LSHNearestNeighborSearchModel[T <: LSHNearestNeighborSearchModel[
                         partitionId: Int,
                         itemVectors: mutable.Map[ItemId, Vector],
                         hashBuckets: mutable.Map[Int, Array[mutable.ArrayBuffer[ItemId]]]): Unit = {
-    val logger = Logger.getRootLogger
+    val logger = Logger.getLogger(getClass)
 
-    logger.info(s"Partition id [$partitionId] stats:")
-    logger.info(s"Size of item vectors map: [${itemVectors.size}]")
-    logger.info(s"Number of hash buckets: [${hashBuckets.size}]")
+    logger.info(s"Partition id [$partitionId] stats:\nSize of item vectors map: [${itemVectors.size}]\nNumber of hash buckets: [${hashBuckets.size}]")
     hashBuckets.foreach{ case (bucketId, items) =>
       logger.info(s"Bucket id [$bucketId] has [${items(0).size}] src items and [${items(1).size}] candidates")
     }
